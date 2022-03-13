@@ -1,8 +1,5 @@
 package com.example.smsvalidator;
 
-
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -15,14 +12,8 @@ import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.textservice.SentenceSuggestionsInfo;
-import android.view.textservice.SuggestionsInfo;
-import android.view.textservice.TextServicesManager;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.view.textservice.SpellCheckerSession;
-import android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener;
-import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +30,6 @@ public class CustomAdapter extends BaseAdapter {
     ArrayList<String> list=new ArrayList<String>();//Creating arraylist
 
     public CustomAdapter(Context applicationContext, String[] countryList, String[] mesajList, String[] saatList) {
-
         this.countryList = countryList;
         this.mesajList = mesajList;
         this.saatList = saatList;
