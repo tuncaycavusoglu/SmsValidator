@@ -64,6 +64,8 @@ public class CustomAdapter extends BaseAdapter {
         highlightTextPart(mesaj,10,"[ ]{2,}");
 
 
+
+
         mesaj.setMovementMethod(LinkMovementMethod.getInstance());
         if(validText.length() > 0){
             mesaj2.setBackgroundColor(Color.RED);
@@ -83,8 +85,20 @@ public class CustomAdapter extends BaseAdapter {
         String Tarih="(\\d\\d:\\d\\d)";
         mesaj=mesaj.replaceAll(Tarih,"*");
          //Mesaj içindeki linkleri yakala
-        String Were = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
-        mesaj=mesaj.replaceAll(Were,"**");
+        String reglink1 = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+        mesaj=mesaj.replaceAll(reglink1,"**");
+        String reglink2 = "(www.)?"
+        + "[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]"
+        + "{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)";
+        mesaj=mesaj.replaceAll(reglink2,"**");
+
+        String iziniptal1="ulasilmasini istemiyorsan";
+        String iziniptal2="almak istemiyorsan";
+        if( !(mesaj.contains(iziniptal1) || mesaj.contains(iziniptal2)))
+        {
+            ResultMsg=ResultMsg+"İzin iptal mesajı yoktur, Yasal gönderim değilse ekleyiniz";
+        }
+
        //Özel kelimeler
         mesaj=mesaj.replace("4.5G", "*");
         mesaj=mesaj.replace("4,5G", "*");
@@ -117,9 +131,9 @@ public class CustomAdapter extends BaseAdapter {
 
             if (words.contains((karakter))) {
                 if (!postkarakter.equals(" "))
-                    ResultMsg = ResultMsg + "Noktalama işaretinden sonra boşluk olmalıdır.\n";
+                    ResultMsg = ResultMsg + "Noktalama işaretinden sonra boşluk olmalıdır."+mesaj.substring(i,i+5)+"\n";
                 if (prekarakter.equals(" "))
-                    ResultMsg = ResultMsg + "Noktalama işaretinden önce boşluk olmamalıdır.\n";
+                    ResultMsg = ResultMsg + "Noktalama işaretinden önce boşluk olmamalıdır."+mesaj.substring(i-5,i)+"\n";
             }
         }
 
