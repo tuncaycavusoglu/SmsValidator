@@ -79,6 +79,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     private String validation(String mesaj){
+        boolean izinIptalvarmi=true;
 
         String ResultMsg="";
         //Mesaj içindeki tarih ve tarih saat formatlarını çıkar.
@@ -86,17 +87,18 @@ public class CustomAdapter extends BaseAdapter {
         mesaj=mesaj.replaceAll(Tarih,"*");
          //Mesaj içindeki linkleri yakala
         String reglink1 = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
-        mesaj=mesaj.replaceAll(reglink1,"**");
+        mesaj=mesaj.replaceAll(reglink1,"**LINK**");
         String reglink2 = "(www.)?"
         + "[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]"
         + "{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)";
-        mesaj=mesaj.replaceAll(reglink2,"**");
+        mesaj=mesaj.replaceAll(reglink2,"**LINK**");
 
-        String iziniptal1="ulasilmasini istemiyorsan";
-        String iziniptal2="almak istemiyorsan";
-        if( !(mesaj.contains(iziniptal1) || mesaj.contains(iziniptal2)))
+        String senİzinİptal="iznini iptal edebilirsin";
+        String sizİzinİptal="izninizi iptal edebilirsiniz";
+        if( !(mesaj.contains(senİzinİptal) || mesaj.contains(sizİzinİptal)))
         {
-            ResultMsg=ResultMsg+"İzin iptal mesajı yoktur, Yasal gönderim değilse ekleyiniz";
+            izinIptalvarmi=false;
+            ResultMsg=ResultMsg+"İzin iptal metni yoktur, yasal gönderim değilse ekleyiniz.\n";
         }
 
        //Özel kelimeler
@@ -136,6 +138,88 @@ public class CustomAdapter extends BaseAdapter {
                     ResultMsg = ResultMsg + "Noktalama işaretinden önce boşluk olmamalıdır."+mesaj.substring(i-5,i)+"\n";
             }
         }
+
+        String linkstr="**LINK**";
+        int Index=0;
+        while (Index!=-1) {
+            int newIndex=mesaj.indexOf(linkstr, Index);
+            Index=newIndex;
+            if(Index>-1){
+                if(mesaj.charAt(Index-1)!=" ".toCharArray()[0]){
+                    ResultMsg = ResultMsg + "Linkten önce boşluk olmalıdır.\n";
+                }
+                if(mesaj.charAt(Index+8)!=" ".toCharArray()[0]){
+                    ResultMsg = ResultMsg + "Linkten sonra boşluk olmalıdır.\n";
+                }
+                Index++;
+
+            }
+        }
+
+
+        if(izinIptalvarmi){
+            //senli-sizli uyum kontrolü
+            String izinİptalsizMesaj=mesaj.replace(senİzinİptal,"**").replace(sizİzinİptal,"**")
+                    .replace("size ulasilmasini istemiyorsaniz","**");
+
+            int MsgSahıs=-1;
+            int İzinSahıs=-1;
+            List<String> İyeliklist=Arrays.asList("ınız", "iniz", "unuz", "ünüz");
+            List<String> Kisilist=Arrays.asList("siz","sizin","size","sizi");
+            List<String> Kisilist2=Arrays.asList("sen","sana","seni");
+            String[] splitmsglist= izinİptalsizMesaj.split(" ");
+
+            Boolean devam=true;
+            int i=0;
+            while(devam && i< splitmsglist.length) {
+               if( Kisilist.contains(splitmsglist[i])) {
+                   MsgSahıs=1;
+                   devam=false;
+               }
+               else{
+                   i++;
+               }
+
+            }
+            if(izinİptalsizMesaj.contains("ınız")||izinİptalsizMesaj.contains("iniz")||izinİptalsizMesaj.contains("unuz")||izinİptalsizMesaj.contains("ünüz")){
+                MsgSahıs=1;
+            }
+
+            if(MsgSahıs!=1){
+
+                Boolean devam2=true;
+                int i2=0;
+                while(devam2 && i2< splitmsglist.length) {
+                    if( Kisilist2.contains(splitmsglist[i2])) {
+                        MsgSahıs=2;
+                        devam2=false;
+                    }
+                    else{
+                        i2++;
+                    }
+
+                }
+            }
+
+            //İzin iptal metninin sen siz durumu yorumlanıyor.
+
+            if(mesaj.contains(sizİzinİptal)){
+                İzinSahıs=1;
+            }
+            else if (mesaj.contains(senİzinİptal)){
+                İzinSahıs=2;
+            }
+
+            if(MsgSahıs==1 && İzinSahıs==2){
+                ResultMsg = ResultMsg + "Mesaj metni sizli iken, izin iptal metni senli olmamalıdır.\n";
+            }
+            else if (MsgSahıs==2 && İzinSahıs==1){
+                ResultMsg = ResultMsg + "Mesaj metni senli iken, izin iptal metni sizli olmamalıdır.\n";
+            }
+
+
+        }
+
 
 
 

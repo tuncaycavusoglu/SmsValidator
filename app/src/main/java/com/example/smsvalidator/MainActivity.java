@@ -4,26 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView simpleList;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +24,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, PackageManager.PERMISSION_GRANTED);
         readSms();
+        //SmsListener listener = new SmsListener();
+        //listener.onReceive(getApplicationContext(),getParentActivityIntent());
     }
 
     public void readSms(){
         final String SMS_URI_INBOX = "content://sms/inbox";
         Uri uri = Uri.parse(SMS_URI_INBOX);
         String[] select = new String[] { "address", "body", "date" };
-        //Cursor cursor = getContentResolver().query(uri, select, "address LIKE '%TURKCELL%'", null, "date desc"+ " LIMIT 100");
 
         Cursor cursor = getContentResolver().query(uri, select, "address IN ("+senderList()+")", null, "date desc"+ " LIMIT 150");
 
